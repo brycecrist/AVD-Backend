@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 
 import express from "express"
 const app = express()
+app.use(express.json())
 const port = 3000
 
 interface SignupPayload {
@@ -10,7 +11,7 @@ interface SignupPayload {
 }
 
 function isSignupPayload(payload: SignupPayload): payload is SignupPayload {
-  return (payload as SignupPayload).email !== undefined
+  return payload?.email !== undefined
 }
 
 app.get("/", (req, res) => {
@@ -19,8 +20,10 @@ app.get("/", (req, res) => {
 
 app.post("/signup", (req: Request, res: Response) => {
   const body = req.body
+  console.log(body)
   if (!isSignupPayload(body)) {
-    res.send(422)
+    res.sendStatus(422)
+    return
   }
 
   res.json({token: "Generated token", email: body.email, password: body.password})
